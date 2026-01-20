@@ -2,7 +2,7 @@
 Decomplicator sets up development environments for Nintendo 64 decompilation projects on Windows. The process is almost
 entirely automatic, and you only need to select a project template, project folder, and the project's base ROM to begin.
 
-To begin, download the most recent release.
+To begin, [download the most recent release](https://github.com/LucretiaArc/Decomplicator/releases).
 
 # Why?
 Under normal circumstances, software developers can set up their own development environment. However, Nintendo 64
