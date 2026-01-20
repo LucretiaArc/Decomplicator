@@ -1,0 +1,98 @@
+# This is the template for Decomplicator configuration files. These files provide information used for project setup,
+# acting as a "template file", but are also copied to the project directory to serve as the "project file". As a result,
+# some of the information in the file is only relevant when used as the project template, and other information is only
+# relevant when used as the project file.
+
+# Before distributing a configuration files, it is recommended that you strip template comments from the file, and try
+# to match the format and style used by the configuration files found in the "config" directory where possible.
+
+
+# The config file format version number. This tells the application how the data is structured. Leave this as-is.
+format_version = 1
+
+
+# Describes the project template. The information here will be shown when selecting a template.
+[info]
+
+# Name of the template. This should usually reflect the name and release version or revision (if applicable) of the
+# repository that the template is based on.
+name = "Example Game 64 Decomp v1.0"
+
+# Description of the template. This should be short, and should help users decide whether this template is right for
+# their project. This supports basic HTML, best used for subtle emphasis.
+# See https://doc.qt.io/qt-6/richtext-html-subset.html
+description = "This is an example of a Nintendo 64 decompilation project for <i>Example Game</i>."
+
+
+# Describes details about the repository on which projects using this template will be based.
+[repo]
+
+# URL pointing to the base repository. The repository must be accessible without requiring the user to authenticate.
+url = "https://example.com/repo/ExampleGame64.git"
+
+# ID of the specific commit on which new projects will be based.
+commit = "1e66bf962e3f1065ecce3574c138cdcaa7c9350a"
+
+# Repository-relative path to the directory in which to set up the project's dependencies. This directory must not
+# already exist in the base repository for the project.
+env_path = "env"
+
+
+# Describes the specific ROM file which will need to be supplied by the user.
+[baserom]
+
+# Name of the game, including any version information needed to identify a specific revision of the game. This will be
+# shown to the user to help them ensure that they have dumped the correct ROM for the project.
+name = "Example Game 64 (USA)"
+
+# Expected SHA-256 hash of the required ROM file. Note that the ROM must be supplied in big-endian (.z64) format.
+sha256 = "c59b95fedfbdeb0d3390fec1ecefb9ffbfe74a5a3fad66d53c0b4dc2c64f161f"
+
+# Repository-relative path to which the ROM will be copied.
+path = "base_rom.z64"
+
+
+# Describes a single dependency. The name of the table determines the name of the directory into which the dependency
+# archive will be extracted (the "dependency directory"). For example, the dependency archive for this table would be
+# extracted into "env/n64lib" in the project repository.
+[dependency.n64lib]
+
+# Name of the dependency shown to the user when setting up the project. This should include version information.
+name = "N64Lib (v1.23.4)"
+
+# URL from which to download the dependency archive. At the time of writing, any archive format supported by Python's
+# zipfile and tarfile modules is supported.
+url = "https://www.example.com/n64lib/version/v1.23.4.zip"
+
+# Expected SHA-256 hash of the dependency archive.
+sha256 = "299b9be3f83e956390776c68c71d28973bd561d8765b612250e85b87e6c478a2"
+
+# List of relative paths to include in the build environment's PATH variable. The paths are relative to the dependency
+# directory. For example, the below configuration would add the paths "env/n64lib" and "env/n64lib/bin" in the project
+# repository to the build environment's PATH variable.
+include_paths = ["", "bin"]
+
+# Sequence of basic file operations to perform. Each file path is relative to the dependency directory. This key is
+# optional. The list of valid operations is as follows:
+# copy <src file/dir> <dst file/dir>
+# move <src file/dir> <dst file/dir>
+# delete <file/dir>
+setup = [
+    ["copy", "data/mapping/standard.csv", "include/mapping.csv"],
+    ["delete", "data/interfering_file.ini"]
+]
+
+
+# Describes a single button on the project actions page, with a clarifying description alongside it. Multiple actions
+# can be added by repeating the "[[action]]" header.
+[[action]]
+name = "Build and Play"
+description = "Build the ROM and launch it using your default emulator."
+
+# Sequence of commands to execute when the button is clicked. Each command is executed in the project environment.
+# Commands will be processed using the Windows Command Processor, so environment variables can be expanded by enclosing
+# them with percent signs (%).
+commands = [
+    ["make", "-j", "%NUMBER_OF_PROCESSORS%"],
+    ["start", "./build/rom_out.z64"]
+]

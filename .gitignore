@@ -1,0 +1,11 @@
+__pycache__
+.venv
+build
+dist
+
+.idea
+
+/data
+/decomplicator.spec
+/version.txt
+/version_win.txt

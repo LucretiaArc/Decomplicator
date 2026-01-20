@@ -1,0 +1,17 @@
+[project]
+name = "Decomplicator"
+version = "0.1.0"
+description = "Sets up development environments for Nintendo 64 decompilation projects on Windows."
+requires-python = ">=3.14"
+dependencies = [
+    "PySide6==6.10.1",
+    "pyinstaller==6.18.0",
+    "Pillow==12.1.0"
+]
+
+[build-system]
+requires = ["uv_build>=0.9.26,<0.10.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+namespace = true

@@ -1,0 +1,74 @@
+format_version = 1
+
+[info]
+name = "HackerSM64 v2.4"
+description = "A widely-supported base for <i>Super Mario 64</i> romhacks, with common tweaks that can be easily toggled.<br><b>Recommended for beginners.</b>"
+
+[repo]
+url = "https://github.com/HackerN64/HackerSM64.git"
+commit = "93a0816b6cae207dded12e5e2eaa2aa8fbdb5d2c"
+env_path = "env"
+
+[baserom]
+name = "Super Mario 64 (USA)"
+sha256 = "17ce077343c6133f8c9f2d6d6d9a4ab62c8cd2aa57c40aea1f490b4c8bb21d91"
+path = "baserom.us.z64"
+
+
+[dependency.git]
+name = "Git for Windows (v2.45.1)"
+url = "https://github.com/git-for-windows/git/releases/download/v2.45.1.windows.1/Git-2.45.1-64-bit.tar.bz2"
+sha256 = "3314914e47c080e80ddcbc543e374890bdfe4d60e9cd7d0faa996d3d0a174a05"
+include_paths = ["bin", "usr/bin"]
+
+[dependency.winlibs]
+name = "WinLibs Standalone GCC (v14.1.0)"
+url = "https://github.com/brechtsanders/winlibs_mingw/releases/download/14.1.0posix-18.1.5-11.0.1-ucrt-r1/winlibs-x86_64-posix-seh-gcc-14.1.0-mingw-w64ucrt-11.0.1-r1.zip"
+sha256 = "3842c90a683010249eddffa5baba60fcfa277d1ebefd86946299b1436f4c89ca"
+include_paths = ["mingw64/bin"]
+
+[dependency.n64libs]
+name = "Aglab's N64 MinGW Toolchain (v2.0)"
+url = "https://github.com/aglab2/winn64libs/releases/download/2.0/n64libs.zip"
+sha256 = "6eb61aed51294038be0605f3a41d7c1f8577a3d27e54a1e104f4325c135e22b2"
+include_paths = ["sdk/bin"]
+
+[dependency.python]
+name = "Python (v3.14.2)"
+url = "https://www.python.org/ftp/python/3.14.2/python-3.14.2-embed-amd64.zip"
+sha256 = "f05e28d161c6b15af64a7cb7f08b4a22b3a6b03eee71baee24ea557b3bdd5798"
+include_paths = [""]
+setup = [
+    ["copy", "python.exe", "python3.exe"],
+    ["delete", "python314._pth"]
+]
+
+[dependency.ripgrep]
+name = "ripgrep (v14.1.0)"
+url = "https://github.com/BurntSushi/ripgrep/releases/download/14.1.0/ripgrep-14.1.0-x86_64-pc-windows-msvc.zip"
+sha256 = "fe4f75edfaa50f0d4fecbf47696b7629f3449c9c2c5a4da828753139e5a2e203"
+include_paths = ["ripgrep-14.1.0-x86_64-pc-windows-msvc"]
+
+
+[[action]]
+name = "Build ROM"
+description = "Compile your changes into a ROM."
+commands = [["mingw32-make", "-j", "%NUMBER_OF_PROCESSORS%"]]
+
+[[action]]
+name = "Build and Play"
+description = "Build the ROM and launch it using your default emulator."
+commands = [
+    ["mingw32-make", "-j", "%NUMBER_OF_PROCESSORS%"],
+    ["start", "./build/us_n64/sm64.z64"]
+]
+
+[[action]]
+name = "Clear Build Cache"
+description = "Delete all data created by building the ROM. This can fix certain types of build errors, but makes building the ROM take longer next time."
+commands = [["mingw32-make", "clean"]]
+
+[[action]]
+name = "Create Patch"
+description = "Create a patch that you can use to share your romhack with others."
+commands = [["mingw32-make", "patch", "-j", "%NUMBER_OF_PROCESSORS%"]]
