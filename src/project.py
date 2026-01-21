@@ -154,45 +154,48 @@ class Project:
         root_task = task_base.TaskSequence(parent, "Create project")
         dependencies_done = files.get_project_dependencies_done(env_path)
         dependencies_task = task_impl.SetupDependenciesTaskSequence(root_task, "Set up dependencies", env_path)
+        root_task.add_task(dependencies_task)
         for dep in self.config.dependencies:
+            if dep.dir_name in dependencies_done:
+                continue
+
             dep_task = task_base.TaskSequence(dependencies_task, dep.name)
             dependencies_task.add_task(dep_task)
             setup_path = env_path / dep.dir_name
+            cache_path = files.DEP_CACHE_DIR / dep.hash
 
-            if not dep.dir_name in dependencies_done:
-                cache_path = files.DEP_CACHE_DIR / dep.hash
+            dep_task.add_task(task_impl.DownloadAndValidateTask(
+                dep_task,
+                "Download archive",
+                cache_path,
+                dep.url,
+                dep.hash
+            ))
 
-                dep_task.add_task(task_impl.DownloadAndValidateTask(
+            dep_task.add_task(task_impl.FileExtractionTask(
+                dep_task,
+                "Extract archive",
+                cache_path,
+                setup_path
+            ))
+
+            if dep.setup_commands:
+                dep_task.add_task(task_impl.FileOperationSequenceTask(
                     dep_task,
-                    "Download archive",
-                    cache_path,
-                    dep.url,
-                    dep.hash
+                    "Run setup operations",
+                    setup_path,
+                    dep.setup_commands
                 ))
 
-                dep_task.add_task(task_impl.FileExtractionTask(
-                    dep_task,
-                    "Extract archive",
-                    cache_path,
-                    setup_path
-                ))
+            dep_task.add_task(task_impl.MarkDependencyCompleteTask(
+                dep_task,
+                "Mark as done",
+                env_path,
+                dep.dir_name
+            ))
 
-                if dep.setup_commands:
-                    dep_task.add_task(task_impl.FileOperationSequenceTask(
-                        dep_task,
-                        "Run setup operations",
-                        setup_path,
-                        dep.setup_commands
-                    ))
-
-                dep_task.add_task(task_impl.MarkDependencyCompleteTask(
-                    dep_task,
-                    "Mark as done",
-                    env_path,
-                    dep.dir_name
-                ))
-
-        root_task.add_task(dependencies_task)
+        if not dependencies_task.subtasks:
+            dependencies_task.hidden = True
 
         if not from_existing_repo:
             root_task.add_task(task_impl.SetupGitRepoTask(
