@@ -148,7 +148,7 @@ class ProjectActionsPage(QWizardPage):
 
         log.info(f"Opened project at {self.project_context.project.path}")
         env = self.project_context.project.get_env()
-        path_desc = "\n".join(env["PATH"].split(";"))
+        path_desc = "\n".join(filter(None, env["PATH"].split(";")))
         log.info(f"Project PATH:\n{path_desc}")
 
         while self.project_action_container.layout().count():

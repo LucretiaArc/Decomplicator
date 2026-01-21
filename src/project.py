@@ -96,7 +96,7 @@ class Project:
 
     def get_env_path(self) -> pathlib.Path:
         """
-        Gets the path to the directory in which the project's environment directory, in which dependencies are set up.
+        Gets the path to the directory in which the project's dependencies are set up.
         :return: Path to the project environment directory.
         """
         return self.path / self.config.repo_env_path
