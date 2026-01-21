@@ -10,6 +10,7 @@ log = logging.getLogger(__name__)
 
 
 PROJECT_FILE_NAME = "decomplicator.toml"
+DEPENDENCIES_FILE_NAME = "dependencies.txt"
 RECENT_PROJECT_COUNT = 8
 
 # Static data directory location changes depending on whether the application is packaged or running from source
@@ -90,3 +91,36 @@ def add_recent_project(project_file: pathlib.Path):
     except OSError:
         log.warning("Couldn't write to recent projects file")
         pass
+
+
+def get_project_dependencies_done(env_path: pathlib.Path) -> list[str]:
+    """
+    Reads a list of successfully set up project dependencies.
+    :param env_path: Path to the project dependencies directory.
+    :return: Names of project dependencies that were successfully set up.
+    """
+    file = env_path / DEPENDENCIES_FILE_NAME
+    if not file.exists():
+        return []
+
+    file_text = file.read_text()
+    return [line.strip() for line in file_text.splitlines() if line]
+
+
+def mark_project_dependency_done(env_path: pathlib.Path, dep_name: str):
+    """
+    Marks a project dependency as successfully set up.
+    :param env_path: Path to the project dependencies directory.
+    :param dep_name: Name of project dependency that was successfully set up.
+    """
+    file = env_path / DEPENDENCIES_FILE_NAME
+    if not file.exists():
+        deps_finished = []
+    else:
+        file_text = file.read_text()
+        deps_finished = [line.strip() for line in file_text.splitlines() if line]
+
+    if dep_name not in deps_finished:
+        deps_finished.append(dep_name)
+        file_text = "\n".join(deps_finished)
+        file.write_text(file_text)

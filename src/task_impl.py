@@ -166,7 +166,8 @@ class FileExtractionTask(Task):
                  archive_path: pathlib.Path,
                  output_path: pathlib.Path):
         """
-        Extracts an archive into the specified directory.
+        Extracts an archive into the specified directory. The contents of the directory will be removed before
+        extraction begins.
         :param parent: Parent ``QObject``, see ``QThread``.
         :param name: Name of the task, as shown to the user.
         :param archive_path: Path to the archive file.
@@ -177,21 +178,19 @@ class FileExtractionTask(Task):
         self.output_path = output_path
 
     def run_impl(self):
-        self.report_progress(None)
-        try:
-            log.info(f"Extracting {self.archive_path} -> {self.output_path}")
-            self.output_path.mkdir(parents=True)
-            if zipfile.is_zipfile(self.archive_path):
-                log.info("Extracting as ZIP archive")
-                self._extract_zip()
-            elif tarfile.is_tarfile(self.archive_path):
-                log.info("Extracting as tar archive")
-                self._extract_tar()
-            else:
-                raise TaskFailureException("Archive format was not recognised.")
-        except Exception as e:
+        if self.output_path.exists():
             shutil.rmtree(self.output_path)
-            raise e
+
+        log.info(f"Extracting {self.archive_path} -> {self.output_path}")
+        self.output_path.mkdir(parents=True)
+        if zipfile.is_zipfile(self.archive_path):
+            log.info("Extracting as ZIP archive")
+            self._extract_zip()
+        elif tarfile.is_tarfile(self.archive_path):
+            log.info("Extracting as tar archive")
+            self._extract_tar()
+        else:
+            raise TaskFailureException("Archive format was not recognised.")
 
     def _extract_zip(self):
         try:
@@ -254,59 +253,77 @@ class FileOperationSequenceTask(Task):
         # Windows' "del" command always returns status code 0 if the command syntax was correct, even if file deletion
         # fails. This task doesn't necessarily have the benefit of running with extra dependencies like a project action
         # does, since it's used in dependency setup, so an alternate implementation wouldn't be available.
-        try:
-            for i, command in enumerate(self.file_operations):
-                if self.is_cancelled():
-                    raise TaskCancelledException()
+        for i, command in enumerate(self.file_operations):
+            if self.is_cancelled():
+                raise TaskCancelledException()
 
-                operation_name = command[0].lower()
-                args = [self.base_path / f for f in command[1:]]
-                is_file_target = args[0].is_file()
+            operation_name = command[0].lower()
+            args = [self.base_path / f for f in command[1:]]
+            is_file_target = args[0].is_file()
 
-                arg_count = 1 if operation_name == "delete" else 2
+            arg_count = 1 if operation_name == "delete" else 2
 
-                if len(args) != arg_count:
-                    raise TaskFailureException(f'Wrong number of parameters to "{operation_name}" operation')
+            if len(args) != arg_count:
+                raise TaskFailureException(f'Wrong number of parameters to "{operation_name}" operation')
 
-                operation_desc = " -> ".join(str(s) for s in args)
-                try:
-                    log.info(f"Performing file operation: {operation_name} {operation_desc}")
-                    if operation_name == "copy":
-                        if is_file_target:
-                            args[1].parent.mkdir(parents=True, exist_ok=True)
-                            args[0].copy(args[1])
-                        else:
-                            shutil.copytree(args[0], args[1], dirs_exist_ok=True)
-                    elif operation_name == "move":
-                        if is_file_target:
-                            args[1].parent.mkdir(parents=True, exist_ok=True)
-                            args[0].move(args[1])
-                        else:
-                            args[1].mkdir(parents=True, exist_ok=True)
-                            for obj in args[0].iterdir():
-                                shutil.move(obj, args[1] / obj.name)
-                            args[0].rmdir()
-                    elif operation_name == "delete":
-                        if is_file_target:
-                            args[0].unlink()
-                        else:
-                            shutil.rmtree(args[0], onexc=self._remove_read_only)
-                except OSError as e:
-                    target_type = "file" if is_file_target else "directory"
-                    raise TaskFailureException(f"Could not {operation_name} {target_type}.\n\n"
-                                               f"{operation_desc}\n\n"
-                                               f"{e.strerror}")
+            operation_desc = " -> ".join(str(s) for s in args)
+            try:
+                log.info(f"Performing file operation: {operation_name} {operation_desc}")
+                if operation_name == "copy":
+                    if is_file_target:
+                        args[1].parent.mkdir(parents=True, exist_ok=True)
+                        args[0].copy(args[1])
+                    else:
+                        shutil.copytree(args[0], args[1], dirs_exist_ok=True)
+                elif operation_name == "move":
+                    if is_file_target:
+                        args[1].parent.mkdir(parents=True, exist_ok=True)
+                        args[0].move(args[1])
+                    else:
+                        args[1].mkdir(parents=True, exist_ok=True)
+                        for obj in args[0].iterdir():
+                            shutil.move(obj, args[1] / obj.name)
+                        args[0].rmdir()
+                elif operation_name == "delete":
+                    if is_file_target:
+                        args[0].unlink()
+                    else:
+                        shutil.rmtree(args[0], onexc=self._remove_read_only)
+            except OSError as e:
+                target_type = "file" if is_file_target else "directory"
+                raise TaskFailureException(f"Could not {operation_name} {target_type}.\n\n"
+                                           f"{operation_desc}\n\n"
+                                           f"{e.strerror}")
 
-                self.report_progress(i / len(self.file_operations))
-        except Exception as e:
-            shutil.rmtree(self.base_path)
-            raise e
+            self.report_progress(i / len(self.file_operations))
 
     @staticmethod
     def _remove_read_only(func, p, _):
         # See https://docs.python.org/3/library/shutil.html#rmtree-example
         os.chmod(p, stat.S_IWRITE)
         func(p)
+
+
+class MarkDependencyCompleteTask(Task):
+    def __init__(self,
+                 parent: QtCore.QObject | None,
+                 name: str,
+                 env_path: pathlib.Path,
+                 dependency_name: str):
+        """
+        Marks a dependency as successfully set up, preventing it from being set up again the next time the project is
+        opened.
+        :param parent: Parent ``QObject``, see ``QThread``.
+        :param name: Name of the task, as shown to the user.
+        :param env_path: Path to the project environment directory
+        :param dependency_name: Name of the dependency to mark as complete
+        """
+        super().__init__(parent, name, hidden=True)
+        self.env_path = env_path
+        self.dependency_name = dependency_name
+
+    def run_impl(self):
+        files.mark_project_dependency_done(self.env_path, self.dependency_name)
 
 
 class SetupGitRepoTask(Task):
