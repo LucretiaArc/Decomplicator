@@ -5,12 +5,12 @@ import os
 import pathlib
 import sys
 
-PROJECT_FILE_NAME = "decomplicator.toml"
-RECENT_PROJECT_COUNT = 8
-
 
 log = logging.getLogger(__name__)
 
+
+PROJECT_FILE_NAME = "decomplicator.toml"
+RECENT_PROJECT_COUNT = 8
 
 # Static data directory location changes depending on whether the application is packaged or running from source
 # See https://pyinstaller.org/en/stable/runtime-information.html

@@ -237,14 +237,13 @@ class SetupFromTemplateProgressPage(SetupBaseProgressPage):
         )
 
         self.task = self.project_context.project.get_setup_task(self)
-        project_file_task = task_impl.FileCopyTask(
+        project_file_task = task_impl.CreateProjectFileTask(
             self.task,
-            "Create project file",
+            "Finish project setup",
             self.setup_context.template_config_path,
-            self.setup_context.project_path / files.PROJECT_FILE_NAME,
-            "An error occurred when creating the project file."
+            self.setup_context.project_path,
+            self.project_context.project.get_env()
         )
-        project_file_task.hidden = True
         self.task.add_task(project_file_task)
 
         self.begin_setup()

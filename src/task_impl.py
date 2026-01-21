@@ -24,6 +24,33 @@ from task_base import *
 log = logging.getLogger(__name__)
 
 
+def task_run_command(task: Task,
+                     command: list[str],
+                     cwd: pathlib.Path,
+                     env: dict[str, str]) -> int:
+    """
+    Runs a command as part of a task, terminating the command if the task is cancelled. Output of the command will be
+    logged to the log file.
+    :param task: Task to monitor for the "cancelled" flag.
+    :param command: Command to execute.
+    :param cwd: Working directory of the command.
+    :param env: Environment mapping for the command.
+    :return: The exit status of the command.
+    """
+    command_text = shlex.join(command)
+    log.info(f"Running command {command_text}")
+    p = subprocess.Popen(command, cwd=cwd, env=env, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+    while p.poll() is None:
+        if task.is_cancelled():
+            p.send_signal(signal.CTRL_BREAK_EVENT)
+            break
+
+    exit_status = p.wait()
+    log.info(f"Output for command {command_text}:\n" + p.stdout.read().decode())
+
+    return exit_status
+
+
 class SetupDependenciesTaskSequence(TaskSequence):
     def __init__(self,
                  parent: QtCore.QObject | None,
@@ -288,7 +315,8 @@ class SetupGitRepoTask(Task):
                  name: str,
                  url: str,
                  commit_id: str,
-                 repo_path: pathlib.Path, env: dict[str, str]):
+                 repo_path: pathlib.Path,
+                 env: dict[str, str]):
         """
         Sets up the git repository for a project. This is a three-step process:
          * Clone the git repository into a temporary directory.
@@ -378,22 +406,65 @@ class SetupGitRepoTask(Task):
                 raise TaskFailureException("Error(s) occurred when moving git repository from temporary folder. "
                                            "See the log file for more information.")
 
-        log.info(f"Checking out commit {self.commit_id}")
-        command = ["git", "checkout", "-b", "decomplicator-project", self.commit_id]
-        p = subprocess.Popen(command, cwd=self.repo_path, env=self.env, shell=True, stderr=subprocess.PIPE)
+        if self.is_cancelled():
+            raise TaskCancelledException()
 
-        while p.poll() is None:
-            if self.is_cancelled():
-                p.send_signal(signal.CTRL_BREAK_EVENT)
-                break
+        exit_status = task_run_command(
+            self,
+            ["git", "checkout", "-b", "decomplicator-project", self.commit_id],
+            self.repo_path,
+            self.env
+        )
 
-        exit_status = p.wait()
-        log.info("Git checkout output:\n" + p.stderr.read().decode())
         if self.is_cancelled():
             raise TaskCancelledException()
         elif exit_status != 0:
             raise TaskFailureException(
                 "An error occurred when checking out commit from git repository. "
+                "See the log file for more information."
+            )
+
+
+class CreateProjectFileTask(Task):
+    def __init__(self,
+                 parent: QtCore.QObject | None,
+                 name: str,
+                 template_file_path: pathlib.Path,
+                 project_path: pathlib.Path,
+                 project_env: dict[str, str]):
+        """
+        Creates the project file for a project, and stages it for the next commit.
+        :param parent: Parent ``QObject``, see ``QThread``.
+        :param name: Name of the task, as shown to the user.
+        :param template_file_path: Path to the project template to use.
+        :param project_path: Path to the project root directory, i.e. the root directory of the repository.
+        :param project_env: Mapping defining the environment variables for the project environment.
+        """
+        super().__init__(parent, name)
+        self.template_file_path = template_file_path
+        self.project_path = project_path
+        self.env = project_env
+
+    def run_impl(self):
+        project_file_path = self.project_path / files.PROJECT_FILE_NAME
+        log.info(f"Copy project file {self.template_file_path} -> {project_file_path}")
+        try:
+            self.template_file_path.copy(project_file_path)
+        except OSError as e:
+            raise TaskFailureException(f"Couldn't create project file.\n\n{e.strerror}")
+
+        exit_status = task_run_command(
+            self,
+            ["git", "add", str(project_file_path)],
+            self.project_path,
+            self.env
+        )
+
+        if self.is_cancelled():
+            raise TaskCancelledException()
+        elif exit_status != 0:
+            raise TaskFailureException(
+                "An error occurred when adding the project file to the git repository. "
                 "See the log file for more information."
             )
 
