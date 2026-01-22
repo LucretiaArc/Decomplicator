@@ -32,14 +32,16 @@ class StartPage(QWizardPage):
         self.layout().addWidget(self.open_project_radio)
         self.button_group.addButton(self.open_project_radio)
 
-        self.recent_projects_label = QLabel("Recent projects:", self)
-        self.layout().addWidget(self.recent_projects_label)
+        self.recent_projects_container = QWidget(self)
+        self.recent_projects_container.setLayout(QVBoxLayout())
+        self.recent_projects_container.layout().setContentsMargins(24, 0, 0, 0)
+        self.layout().addWidget(self.recent_projects_container)
 
         self.recent_project_buttons: list[QRadioButton] = []
         self.recent_project_files: list[pathlib.Path] = []
         for i in range(files.RECENT_PROJECT_COUNT):
             radio = QRadioButton("", self)
-            self.layout().addWidget(radio)
+            self.recent_projects_container.layout().addWidget(radio)
             self.button_group.addButton(radio)
             self.recent_project_buttons.append(radio)
 
@@ -55,11 +57,6 @@ class StartPage(QWizardPage):
         self.open_project_radio.setChecked(False)
 
         self.recent_project_files = files.get_recent_project_files()
-        if not self.recent_project_files:
-            self.recent_projects_label.hide()
-        else:
-            self.recent_projects_label.show()
-
         for i, radio in enumerate(self.recent_project_buttons):
             radio.setChecked(False)
             if i < len(self.recent_project_files):
