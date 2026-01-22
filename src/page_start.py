@@ -73,10 +73,14 @@ class StartPage(QWizardPage):
         return self.button_group.checkedButton() is not None
 
     def validatePage(self):
+        self.setup_context.setup_from_repo = False
+        self.setup_context.project_path = None
+        self.setup_context.template_config = None
+        self.setup_context.template_config_path = None
+        self.project_context.project = None
+
         if self.new_project_radio.isChecked():
             self.next_page_id = gui_common.PageId.SETUP_TEMPLATE
-            self.setup_context.setup_from_repo = False
-            self.project_context.project = None
             log.info("Creating new project from template")
             return True
         elif self.open_project_radio.isChecked():
@@ -110,6 +114,7 @@ class StartPage(QWizardPage):
             else:
                 self.next_page_id = gui_common.PageId.SETUP_BASEROM
                 self.setup_context.template_config = proj.config
+                self.setup_context.project_path = proj.path
         else:
             self.next_page_id = gui_common.PageId.PROJECT_ACTIONS
 

@@ -17,7 +17,6 @@ class SetupBaseromPage(QWizardPage):
         super().__init__()
         self.setup_context = setup_context
 
-        self.setTitle("New Project")
         self.setSubTitle("Select project base ROM")
         self.setCommitPage(True)
         self.setButtonText(QWizard.WizardButton.CommitButton, "Create Project")
@@ -41,6 +40,11 @@ class SetupBaseromPage(QWizardPage):
         self.browse_button.clicked.connect(self.select_file)
 
     def initializePage(self):
+        if self.setup_context.setup_from_repo:
+            self.setTitle(f"Project: {self.setup_context.project_path.name}")
+        else:
+            self.setTitle("New Project")
+
         self.set_rom_available(False)
         self.completeChanged.emit()
 
