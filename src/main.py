@@ -12,6 +12,7 @@ import page_setup_template
 import page_setup_directory
 import page_setup_rom
 import page_setup_progress
+import page_setup_complete
 import page_actions
 
 
@@ -37,7 +38,6 @@ class MainWindow(QWizard):
         self.setPage(gui_common.PageId.SETUP_TEMPLATE, page_setup_template.SetupTemplatePage(setup_context))
         self.setPage(gui_common.PageId.SETUP_DIRECTORY, page_setup_directory.SetupDirectoryPage(setup_context))
         self.setPage(gui_common.PageId.SETUP_BASEROM, page_setup_rom.SetupBaseromPage(setup_context))
-        self.setPage(gui_common.PageId.PROJECT_ACTIONS, page_actions.ProjectActionsPage(project_context))
 
         self.setPage(
             gui_common.PageId.SETUP_PROGRESS_FROM_TEMPLATE,
@@ -48,6 +48,9 @@ class MainWindow(QWizard):
             gui_common.PageId.SETUP_PROGRESS_FROM_REPO,
             page_setup_progress.SetupFromRepoProgressPage(setup_context, project_context)
         )
+
+        self.setPage(gui_common.PageId.SETUP_COMPLETE, page_setup_complete.SetupCompletePage(project_context))
+        self.setPage(gui_common.PageId.PROJECT_ACTIONS, page_actions.ProjectActionsPage(project_context))
 
         self.currentIdChanged.connect(self.log_page_changed)
 

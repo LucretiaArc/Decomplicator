@@ -108,8 +108,7 @@ class ProjectActionsPage(QWizardPage):
         super().__init__()
         self.project_context = project_context
 
-        self.setTitle("")
-        self.setSubTitle("Project Actions")
+        self.setSubTitle("Project actions")
         self.setLayout(QVBoxLayout(self))
         self.layout().setContentsMargins(0, 5, 0, 5)
 

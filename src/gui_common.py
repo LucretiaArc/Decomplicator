@@ -17,7 +17,8 @@ class PageId(enum.IntEnum):
     SETUP_BASEROM = 3
     SETUP_PROGRESS_FROM_TEMPLATE = 4
     SETUP_PROGRESS_FROM_REPO = 5
-    PROJECT_ACTIONS = 6
+    SETUP_COMPLETE = 6
+    PROJECT_ACTIONS = 7
 
 
 class ProjectContext:

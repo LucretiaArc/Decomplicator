@@ -124,7 +124,6 @@ class SetupBaseProgressPage(QWizardPage):
         self.task = None
 
         self.setCommitPage(True)
-        self.setButtonText(QWizard.WizardButton.CommitButton, "Finish")
         self.setLayout(QVBoxLayout(self))
         self.layout().setContentsMargins(4, 9, 4, 9)
 
@@ -148,6 +147,7 @@ class SetupBaseProgressPage(QWizardPage):
         self.setSubTitle("Setting up project...")
         self.wizard().setOption(QWizard.WizardOption.NoCancelButton, False)
         self.wizard().button(QWizard.WizardButton.CancelButton).setEnabled(True)
+        self.setButtonText(QWizard.WizardButton.CommitButton, self.buttonText(QWizard.WizardButton.NextButton))
 
         self.setup_complete = False
 
@@ -168,7 +168,7 @@ class SetupBaseProgressPage(QWizardPage):
             return self.setup_complete
 
     def nextId(self) -> gui_common.PageId:
-        return gui_common.PageId.PROJECT_ACTIONS
+        return gui_common.PageId.SETUP_COMPLETE
 
     def _error(self, text: str):
         gui_common.error(self, text)
@@ -204,12 +204,12 @@ class SetupBaseProgressPage(QWizardPage):
 
     def on_setup_success(self):
         self.wizard().setOption(QWizard.WizardOption.NoCancelButton, True)
-        self.setSubTitle("Setup complete")
         self.setup_complete = True
         self.completeChanged.emit()
         QApplication.alert(self)
         QApplication.beep()
         log.info("Setup completed successfully")
+        self.wizard().next()
 
     def on_setup_failure(self):
         self.wizard().button(QWizard.WizardButton.CancelButton).setEnabled(True)
@@ -249,8 +249,8 @@ class SetupFromTemplateProgressPage(SetupBaseProgressPage):
         self.begin_setup()
 
     def on_setup_success(self):
-        super().on_setup_success()
         files.add_recent_project(self.setup_context.project_path / files.PROJECT_FILE_NAME)
+        super().on_setup_success()
 
     def set_cleanup_task(self):
         if self.cleanup_task:

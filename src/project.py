@@ -40,7 +40,7 @@ class Action:
 
 
 class Config:
-    CURRENT_VERSION = 1
+    CURRENT_VERSION = 2
     MIN_VERSION = 1
 
     def __init__(self, config_path: pathlib.Path):
@@ -50,20 +50,13 @@ class Config:
         more information.
         :param config_path: Path to a config file. The file will be read to populate information about the config.
         """
-        config_data_text = config_path.read_text()
-        config_data = tomllib.loads(config_data_text)
 
-        format_version = config_data["format_version"]
-        if not isinstance(format_version, int) or format_version < Config.MIN_VERSION:
-            raise ValueError(f"Invalid project format version {format_version}")
-        if format_version > Config.CURRENT_VERSION:
-            raise ValueError(
-                f"Project format version {format_version} isn't supported by this version of Decomplicator."
-            )
+        config_data = self.read_config_file(config_path)
 
         config_info = config_data["info"]
         self.name: str = config_info["name"]
         self.description: str = config_info["description"]
+        self.success_splash: str = config_info["success_splash"]
 
         config_repo: dict = config_data["repo"]
         self.repo_url: str = config_repo["url"]
@@ -82,6 +75,32 @@ class Config:
             self.dependencies.append(dep)
 
         self.action_data: list[Action] = [Action(d) for d in config_data["action"]]
+
+    def read_config_file(self, file_path: pathlib.Path) -> dict:
+        config_data_text = file_path.read_text()
+        config_data = tomllib.loads(config_data_text)
+
+        format_version = config_data["format_version"]
+        if not isinstance(format_version, int) or format_version < self.MIN_VERSION:
+            raise ValueError(f"Invalid project format version {format_version}")
+        if format_version > self.CURRENT_VERSION:
+            raise ValueError(f"Project format version {format_version} isn't supported.")
+
+        upgrade_functions = [
+            None,
+            self.upgrade_v1,
+        ]
+
+        while format_version < self.CURRENT_VERSION:
+            func = upgrade_functions[format_version]
+            func(config_data)
+            format_version += 1
+
+        return config_data
+
+    @staticmethod
+    def upgrade_v1(config_data: dict):
+        config_data["info"]["success_splash"] = "The project was set up successfully."
 
 
 class Project:

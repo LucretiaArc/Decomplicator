@@ -1,8 +1,26 @@
-format_version = 1
+format_version = 2
 
 [info]
 name = "HackerSM64 v2.4"
 description = "A widely-supported base for <i>Super Mario 64</i> romhacks, with common tweaks that can be easily toggled.<br><b>Recommended for beginners.</b>"
+success_splash = """
+<h1>HackerSM64 project setup complete!</h1>
+<p>Congratulations on setting up your project! It is recommended that you Git, which will allow you to track the changes you make to your romhack over time. Git is a command line tool, but there is software that can simplify its use for you, including Visual Studio Code (linked in the section below).</p>
+<p>Once you're familiar with Git, you should:</p>
+<ul>
+<li>Create a new, empty repository on GitHub for your romhack</li>
+<li>Add the GitHub repository as a <i>remote</i></li>
+<li>Frequently <i>commit</i> your changes and <i>push</i> them to GitHub</li>
+</ul>
+<p>Doing this will keep a backup copy of your project in case of data loss, and allow you to revert to an earlier version if anything goes wrong.</p>
+<p>The following commonly used tools are recommended for creating your romhack:</p>
+<h2><a href="https://www.blender.org/download/lts/4-5/">Blender</a> with the <a href="https://github.com/Fast-64/fast64">Fast64 plugin</a></h2>
+<p>Allows you to create custom levels, object models, and animations.<br>
+<i>Fast64 is not compatible with Blender 5.0 at the time of writing, so Blender 4.5 is recommended instead.</i></p>
+<h2><a href="https://code.visualstudio.com/">Visual Studio Code</a></h2>
+<p>A basic code editor. Also provides an easy way to use Git, so it's helpful for managing your project even if you don't want to write code.<br>
+<i>If you prefer, AI features can be disabled completely by checking "Disable AI Features" on the settings page.</i></p>
+"""
 
 [repo]
 url = "https://github.com/HackerN64/HackerSM64.git"
