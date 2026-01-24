@@ -1,12 +1,13 @@
 [project]
 name = "Decomplicator"
-version = "0.3.0"
+version = "0.3.1"
 description = "Sets up development environments for Nintendo 64 decompilation projects on Windows."
 requires-python = ">=3.14"
 dependencies = [
     "PySide6==6.10.1",
+    "pip-system-certs==5.3",
     "pyinstaller==6.18.0",
-    "Pillow==12.1.0"
+    "Pillow==12.1.0",
 ]
 
 [build-system]
