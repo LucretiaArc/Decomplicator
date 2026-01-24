@@ -1,6 +1,6 @@
 [project]
 name = "Decomplicator"
-version = "0.3.1"
+version = "1.0.0"
 description = "Sets up development environments for Nintendo 64 decompilation projects on Windows."
 requires-python = ">=3.14"
 dependencies = [
