@@ -14,9 +14,9 @@ success_splash = """
 </ul>
 <p>Doing this will keep a backup copy of your project in case of data loss, and allow you to revert to an earlier version if anything goes wrong.</p>
 <p>The following commonly used tools are recommended for creating your romhack:</p>
-<h2><a href="https://www.blender.org/download/lts/4-5/">Blender</a> with the <a href="https://github.com/Fast-64/fast64">Fast64 plugin</a></h2>
+<h2><a href="https://www.blender.org/download/">Blender</a> with the <a href="https://github.com/Fast-64/fast64">Fast64 plugin</a></h2>
 <p>Allows you to create custom levels, object models, and animations.<br>
-<i>Fast64 is not compatible with Blender 5.0 at the time of writing, so Blender 4.5 is recommended instead.</i></p>
+<i>Fast64 might not be updated for use with the latest version of Blender. Check the Fast64 page linked above to see which versions are supported.</i></p>
 <h2><a href="https://code.visualstudio.com/">Visual Studio Code</a></h2>
 <p>A basic code editor. Also provides an easy way to use Git, so it's helpful for managing your project even if you don't want to write code.<br>
 <i>If you prefer, AI features can be disabled completely by checking "Disable AI Features" on the settings page.</i></p>
