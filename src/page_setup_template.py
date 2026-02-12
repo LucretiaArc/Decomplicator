@@ -59,7 +59,7 @@ class SetupTemplatePage(QWizardPage):
 
         self.setTitle("New Project")
         self.setSubTitle("Select project template")
-        self.setLayout(QVBoxLayout(self))
+        self.setLayout(QVBoxLayout())
 
         self.instruction_text = QLabel("What should the new project be based on?", self)
         self.layout().addWidget(self.instruction_text)

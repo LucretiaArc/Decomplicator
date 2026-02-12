@@ -17,7 +17,7 @@ class SetupCompletePage(QWizardPage):
         self.setCommitPage(True)
         self.setButtonText(QWizard.WizardButton.CommitButton, "Finish")
         self.setSubTitle("Setup complete")
-        self.setLayout(QVBoxLayout(self))
+        self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(5, 5, 0, 5)
 
         self.scroll_container = QScrollArea(self)

@@ -20,7 +20,7 @@ class SetupBaseromPage(QWizardPage):
         self.setSubTitle("Select project base ROM")
         self.setCommitPage(True)
         self.setButtonText(QWizard.WizardButton.CommitButton, "Create Project")
-        self.setLayout(QVBoxLayout(self))
+        self.setLayout(QVBoxLayout())
         self.layout().setSpacing(16)
 
         self.instruction_text = QLabel("", self)
@@ -28,7 +28,7 @@ class SetupBaseromPage(QWizardPage):
         self.layout().addWidget(self.instruction_text)
 
         self.browse_container = QWidget(self)
-        self.browse_container.setLayout(QHBoxLayout(self.browse_container))
+        self.browse_container.setLayout(QHBoxLayout())
         self.browse_container.layout().setContentsMargins(8, 0, 0, 0)
         self.browse_container.layout().setAlignment(QtCore.Qt.AlignmentFlag.AlignLeft)
         self.layout().addWidget(self.browse_container)

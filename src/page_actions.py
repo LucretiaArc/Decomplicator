@@ -72,7 +72,7 @@ class BaseActionRow(QWidget):
     def __init__(self, parent: QWidget, name: str, description: str):
         super().__init__(parent)
 
-        self.setLayout(QHBoxLayout(self))
+        self.setLayout(QHBoxLayout())
         self.setFixedHeight(36)
         self.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().setSpacing(12)
@@ -109,7 +109,7 @@ class ProjectActionsPage(QWizardPage):
         self.project_context = project_context
 
         self.setSubTitle("Project actions")
-        self.setLayout(QVBoxLayout(self))
+        self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 5, 0, 5)
 
         self.scroll_container = QScrollArea(self)
@@ -119,13 +119,13 @@ class ProjectActionsPage(QWizardPage):
         self.layout().addWidget(self.scroll_container)
 
         self.action_container = QWidget(self.scroll_container)
-        self.action_container.setLayout(QVBoxLayout(self.action_container))
+        self.action_container.setLayout(QVBoxLayout())
         self.action_container.layout().setAlignment(QtCore.Qt.AlignmentFlag.AlignTop)
         self.action_container.layout().setContentsMargins(0, 0, 0, 0)
         self.scroll_container.setWidget(self.action_container)
 
         self.predefined_action_container = QWidget(self.action_container)
-        self.predefined_action_container.setLayout(QVBoxLayout(self.predefined_action_container))
+        self.predefined_action_container.setLayout(QVBoxLayout())
         self.predefined_action_container.layout().setContentsMargins(0, 0, 0, 0)
         self.action_container.layout().addWidget(self.predefined_action_container)
 
@@ -138,7 +138,7 @@ class ProjectActionsPage(QWizardPage):
         self.predefined_action_container.layout().addWidget(console_action)
 
         self.project_action_container = QWidget(self.action_container)
-        self.project_action_container.setLayout(QVBoxLayout(self.project_action_container))
+        self.project_action_container.setLayout(QVBoxLayout())
         self.project_action_container.layout().setContentsMargins(0, 0, 0, 0)
         self.action_container.layout().addWidget(self.project_action_container)
 

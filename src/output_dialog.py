@@ -124,7 +124,7 @@ class TerminalOutputWidget(QtWidgets.QPlainTextEdit):
         self.replace_line = False
         self.text_style = AnsiTextFormatter()
 
-        self.setLayout(QtWidgets.QVBoxLayout(self))
+        self.setLayout(QtWidgets.QVBoxLayout())
         self.layout().setAlignment(QtCore.Qt.AlignmentFlag.AlignBottom | QtCore.Qt.AlignmentFlag.AlignHCenter)
 
         background_color = self.palette().color(QtGui.QPalette.ColorGroup.All, QtGui.QPalette.ColorRole.Base).name()
@@ -241,7 +241,7 @@ class OutputProgressDialog(QtWidgets.QDialog):
         self.setLayout(QtWidgets.QVBoxLayout())
 
         self.label_row = QtWidgets.QWidget(self)
-        self.label_row.setLayout(QtWidgets.QHBoxLayout(self.label_row))
+        self.label_row.setLayout(QtWidgets.QHBoxLayout())
         self.label_row.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().addWidget(self.label_row)
 

@@ -20,14 +20,14 @@ class SetupDirectoryPage(QWizardPage):
         self.setTitle("New Project")
         self.setSubTitle("Select project folder")
         self.setButtonText(QWizard.WizardButton.CommitButton, "Create Project")
-        self.setLayout(QVBoxLayout(self))
+        self.setLayout(QVBoxLayout())
 
         self.instruction_text = QLabel("Please select the folder that will contain the project.", self)
         self.instruction_text.setWordWrap(True)
         self.layout().addWidget(self.instruction_text)
 
         self.directory_row = QWidget(self)
-        self.directory_row.setLayout(QHBoxLayout(self.directory_row))
+        self.directory_row.setLayout(QHBoxLayout())
         self.directory_row.layout().setContentsMargins(0, 0, 0, 0)
         self.layout().addWidget(self.directory_row)
 

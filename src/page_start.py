@@ -20,7 +20,7 @@ class StartPage(QWizardPage):
         self.next_page_id = gui_common.PageId.SETUP_TEMPLATE
 
         self.setTitle("Welcome")
-        self.setLayout(QVBoxLayout(self))
+        self.setLayout(QVBoxLayout())
 
         self.button_group = QButtonGroup(self)
 
@@ -151,7 +151,7 @@ class AboutDialog(QDialog):
         super().__init__(parent, modal=True)
 
         self.setWindowTitle("About Decomplicator")
-        self.setLayout(layout := QVBoxLayout(self))
+        layout = QVBoxLayout(self)
 
         pixmap = QtGui.QPixmap(files.ASSETS_DIR / "icon.png")
         self.logo_image = QLabel(self)

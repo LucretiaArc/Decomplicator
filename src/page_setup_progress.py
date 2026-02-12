@@ -28,11 +28,11 @@ class TaskRow(QWidget):
         super().__init__(parent)
         self.level = level
 
-        self.setLayout(QVBoxLayout(self))
+        self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(0, 0, 0, 0)
 
         self.task_info_row = QWidget(self)
-        self.task_info_row.setLayout(QHBoxLayout(self.task_info_row))
+        self.task_info_row.setLayout(QHBoxLayout())
         self.task_info_row.layout().setContentsMargins(5, 0, 5, 0)
         self.task_info_row.setFixedHeight(20)
         self.task_info_row.setObjectName("InfoRow")
@@ -46,7 +46,7 @@ class TaskRow(QWidget):
         self.task_info_row.layout().addWidget(self.task_label)
 
         self.progress_container = QWidget(self.task_info_row)
-        self.progress_container.setLayout(QHBoxLayout(self.progress_container))
+        self.progress_container.setLayout(QHBoxLayout())
         self.progress_container.setFixedWidth(168)
         self.progress_container.layout().setContentsMargins(0, 0, 0, 0)
         self.task_info_row.layout().addWidget(self.progress_container)
@@ -59,7 +59,7 @@ class TaskRow(QWidget):
         self.progress_container.layout().addWidget(self.progress_bar)
 
         self.subtask_row = QWidget(self)
-        self.subtask_row.setLayout(QVBoxLayout(self.subtask_row))
+        self.subtask_row.setLayout(QVBoxLayout())
         self.subtask_row.layout().setContentsMargins(0, 0, 0, 0)
         self.subtask_row.hide()
         self.layout().addWidget(self.subtask_row)
@@ -124,7 +124,7 @@ class SetupBaseProgressPage(QWizardPage):
         self.task = None
 
         self.setCommitPage(True)
-        self.setLayout(QVBoxLayout(self))
+        self.setLayout(QVBoxLayout())
         self.layout().setContentsMargins(4, 9, 4, 9)
 
         self.scroll_container = QScrollArea(self)
@@ -134,7 +134,7 @@ class SetupBaseProgressPage(QWizardPage):
         self.layout().addWidget(self.scroll_container)
 
         self.task_container = QWidget(self.scroll_container)
-        self.task_container.setLayout(QVBoxLayout(self.task_container))
+        self.task_container.setLayout(QVBoxLayout())
         self.task_container.layout().setContentsMargins(0, 0, 0, 0)
         self.task_container.layout().setAlignment(QtCore.Qt.AlignmentFlag.AlignTop)
         self.scroll_container.setWidget(self.task_container)
