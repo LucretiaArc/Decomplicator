@@ -24,7 +24,7 @@ success_splash = """
 
 [repo]
 url = "https://github.com/HackerN64/HackerSM64.git"
-commit = "93a0816b6cae207dded12e5e2eaa2aa8fbdb5d2c"
+commit = "3b17dc0653c07f53efc319bc2707b514326030b9"
 env_path = "env"
 
 [baserom]
