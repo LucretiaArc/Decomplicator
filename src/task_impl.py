@@ -6,7 +6,6 @@ import pathlib
 import re
 import shlex
 import shutil
-import signal
 import socket
 import stat
 import subprocess
@@ -22,6 +21,17 @@ from task_base import *
 
 
 log = logging.getLogger(__name__)
+
+
+def force_kill_process_and_children(p: subprocess.Popen):
+    """
+    Forcibly kills a process and its children.
+    :param p: Process to kill.
+    """
+    info = subprocess.STARTUPINFO()
+    info.dwFlags = subprocess.STARTF_USESHOWWINDOW
+    info.wShowWindow = subprocess.SW_HIDE
+    subprocess.run(["taskkill", "/F", "/PID", str(p.pid), "/T"], startupinfo=info)
 
 
 def task_run_command(task: Task,
@@ -42,7 +52,7 @@ def task_run_command(task: Task,
     p = subprocess.Popen(command, cwd=cwd, env=env, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     while p.poll() is None:
         if task.is_cancelled():
-            p.send_signal(signal.CTRL_BREAK_EVENT)
+            force_kill_process_and_children(p)
             break
 
     exit_status = p.wait()
@@ -379,7 +389,7 @@ class SetupGitRepoTask(Task):
                 replace_line = line.endswith("\r")
 
                 if self.is_cancelled():
-                    p.send_signal(signal.CTRL_BREAK_EVENT)
+                    force_kill_process_and_children(p)
                     break
 
                 current_progress = 0.0
@@ -565,7 +575,7 @@ class ExecuteCommandTask(Task):
         while p.poll() is None:
             if self.is_cancelled():
                 self.signal_stderr.disconnect()  # Avoids interrupt characters being sent through the signal
-                p.send_signal(signal.CTRL_BREAK_EVENT)
+                force_kill_process_and_children(p)
                 break
 
         exit_status = p.wait()
