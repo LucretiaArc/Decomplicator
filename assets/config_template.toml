@@ -8,7 +8,7 @@
 
 
 # The config file format version number. This tells the application how the data is structured. Leave this as-is.
-format_version = 1
+format_version = 2
 
 
 # Describes the project template. The information here will be shown when selecting a template.
@@ -22,6 +22,11 @@ name = "Example Game 64 Decomp v1.0"
 # their project. This supports basic HTML, best used for subtle emphasis.
 # See https://doc.qt.io/qt-6/richtext-html-subset.html
 description = "This is an example of a Nintendo 64 decompilation project for <i>Example Game</i>."
+
+# Content of the splash screen that's displayed after project setup is successful. This can be used, for example, to
+# direct users toward tools and resources that will help them work on their project. Supports basic HTML.
+# See https://doc.qt.io/qt-6/richtext-html-subset.html
+success_splash = "Your Example Game project was set up successfully!"
 
 
 # Describes details about the repository on which projects using this template will be based.
