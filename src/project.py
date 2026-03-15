@@ -241,12 +241,20 @@ class Project:
         """
         Opens a terminal window which uses the project environment.
         """
-        terminal_path = str(pathlib.Path.home() / "AppData/Local/Microsoft/WindowsApps/wt.exe")
-        command = [
-            terminal_path, "new-tab",
-            "--inheritEnvironment",
-            "--startingDirectory", str(self.path),
-            "--title", f"Project: {self.path.name}",
-            '"%COMSPEC%"'
-        ]
-        subprocess.run(command, env=self.get_env(), shell=True)
+        terminal_path = pathlib.Path.home() / "AppData/Local/Microsoft/WindowsApps/wt.exe"
+        if terminal_path.exists():
+            command = [
+                str(terminal_path), "new-tab",
+                "--inheritEnvironment",
+                "--startingDirectory", str(self.path),
+                "--title", f"Project: {self.path.name}",
+                '"%COMSPEC%"'
+            ]
+            subprocess.run(command, env=self.get_env(), shell=True)
+        else:
+            subprocess.Popen(
+                ["start", "cmd.exe"],
+                cwd=self.path,
+                env=self.get_env(),
+                shell=True
+            )
