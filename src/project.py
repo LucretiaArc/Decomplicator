@@ -163,8 +163,7 @@ class Project:
     def get_setup_task(self, parent: QtCore.QObject, from_existing_repo=False) -> task_base.TaskSequence:
         """
         Gets a task that completes all remaining setup steps for the project when executed, skipping any steps that were
-        already completed. There are limits to the way this is determined. For example, if a dependency directory
-        exists, it is assumed that the dependency was set up correctly.
+        already completed.
         :param parent: Parent ``QObject`` for the task, see ``QThread``.
         :param from_existing_repo: ``True`` if the git repository has been set up already, ``False`` otherwise.
         :return: Task to complete the setup.
