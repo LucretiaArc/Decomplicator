@@ -1,5 +1,6 @@
 import pathlib
 import logging
+import re
 
 from PySide6 import QtCore
 from PySide6.QtWidgets import *
@@ -87,6 +88,17 @@ class SetupDirectoryPage(QWizardPage):
             if not project_path.is_dir():
                 gui_common.warning(self, "Invalid folder selected. Please select a different folder.")
                 continue
+
+            if not all(re.fullmatch(r"[a-zA-Z0-9 ._-]*", name) for name in project_path.parts[1:]):
+                gui_common.warning(
+                    self,
+                    "The selected project path contains folders with non-english letters or special characters in "
+                    "their names. You can choose to use this folder anyway, but you might run into errors when setting "
+                    "up or working on your project.\n"
+                    "\n"
+                    "Just in case, it is strongly recommended to choose another project path, with folder names that "
+                    "only contain english letters, numbers, spaces, dots, dashes, and underscores."
+                )
 
             if not list(project_path.iterdir()):
                 self.setup_context.project_path = project_path
