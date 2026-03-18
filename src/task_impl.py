@@ -4,7 +4,6 @@ import io
 import os
 import pathlib
 import re
-import shlex
 import shutil
 import socket
 import stat
@@ -47,7 +46,7 @@ def task_run_command(task: Task,
     :param env: Environment mapping for the command.
     :return: The exit status of the command.
     """
-    command_text = shlex.join(command)
+    command_text = subprocess.list2cmdline(command)
     log.info(f"Running command {command_text}")
     p = subprocess.Popen(command, cwd=cwd, env=env, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     while p.poll() is None:
@@ -556,7 +555,7 @@ class ExecuteCommandTask(Task):
         self.env = project_env
 
     def run_impl(self):
-        self.signal_new_command.emit(shlex.join(self.command))
+        self.signal_new_command.emit(subprocess.list2cmdline(self.command))
 
         p = subprocess.Popen(
             self.command,
@@ -620,7 +619,7 @@ class ExecuteActionTask(TaskSequence):
         self.commands = action_commands
 
         for command in self.commands:
-            command_string = shlex.join(command)
+            command_string = subprocess.list2cmdline(command)
             task = ExecuteCommandTask(
                 self,
                 f"Command {command_string}",
