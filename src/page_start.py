@@ -184,7 +184,7 @@ class AboutDialog(QDialog):
 
     @staticmethod
     def get_version_string() -> str:
-        version_file_content = files.VERSION_FILE.read_text()
+        version_file_content = files.VERSION_FILE.read_text(encoding="utf-8")
         version_number, commit_id = version_file_content.split("\n")
 
         if commit_id:

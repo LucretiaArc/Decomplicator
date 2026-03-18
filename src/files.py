@@ -57,7 +57,7 @@ def get_recent_project_files() -> list[pathlib.Path]:
     :return: List of recent projects in reverse chronological order (most recent first).
     """
     try:
-        file_text = RECENT_PROJECTS_FILE.read_text()
+        file_text = RECENT_PROJECTS_FILE.read_text(encoding="utf-8")
     except OSError:
         log.warning("Couldn't read recent projects file")
         return []
@@ -87,7 +87,7 @@ def add_recent_project(project_file: pathlib.Path):
     new_recent_projects = new_recent_projects[:RECENT_PROJECT_COUNT]
     file_text = "\n".join(str(p) for p in new_recent_projects)
     try:
-        RECENT_PROJECTS_FILE.write_text(file_text)
+        RECENT_PROJECTS_FILE.write_text(file_text, encoding="utf-8")
     except OSError:
         log.warning("Couldn't write to recent projects file")
         pass
@@ -103,7 +103,7 @@ def get_project_dependencies_done(env_path: pathlib.Path) -> list[str]:
     if not file.exists():
         return []
 
-    file_text = file.read_text()
+    file_text = file.read_text(encoding="utf-8")
     return [line.strip() for line in file_text.splitlines() if line]
 
 
@@ -117,10 +117,10 @@ def mark_project_dependency_done(env_path: pathlib.Path, dep_name: str):
     if not file.exists():
         deps_finished = []
     else:
-        file_text = file.read_text()
+        file_text = file.read_text(encoding="utf-8")
         deps_finished = [line.strip() for line in file_text.splitlines() if line]
 
     if dep_name not in deps_finished:
         deps_finished.append(dep_name)
         file_text = "\n".join(deps_finished)
-        file.write_text(file_text)
+        file.write_text(file_text, encoding="utf-8")

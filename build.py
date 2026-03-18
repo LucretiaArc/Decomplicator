@@ -8,7 +8,7 @@ project_path = pathlib.Path(__file__).parent
 
 
 def get_version_number() -> str:
-    proj_text = (project_path / "pyproject.toml").read_text()
+    proj_text = (project_path / "pyproject.toml").read_text(encoding="utf-8")
     proj = tomllib.loads(proj_text)
     return proj["project"]["version"]
 
@@ -83,10 +83,10 @@ def main():
     version = get_version_number()
     commit = get_commit_id() or ""
     version_file = project_path / "version.txt"
-    version_file.write_text(f"{version}\n{commit}")
+    version_file.write_text(f"{version}\n{commit}", encoding="utf-8")
 
     win_version_file = project_path / "version_win.txt"
-    win_version_file.write_text(get_version_file_content(version, commit))
+    win_version_file.write_text(get_version_file_content(version, commit), encoding="utf-8")
 
     build()
 

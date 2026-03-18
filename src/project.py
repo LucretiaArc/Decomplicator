@@ -77,7 +77,7 @@ class Config:
         self.action_data: list[Action] = [Action(d) for d in config_data["action"]]
 
     def read_config_file(self, file_path: pathlib.Path) -> dict:
-        config_data_text = file_path.read_text()
+        config_data_text = file_path.read_text(encoding="utf-8")
         config_data = tomllib.loads(config_data_text)
 
         format_version = config_data["format_version"]
