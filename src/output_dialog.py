@@ -134,10 +134,7 @@ class TerminalOutputWidget(QtWidgets.QPlainTextEdit):
         self.scroll_reset_button.hide()
         self.layout().addWidget(self.scroll_reset_button)
 
-        font = QtGui.QFont("Cascadia Mono", 10, 400)
-        font.setHintingPreference(QtGui.QFont.HintingPreference.PreferNoHinting)
-        font.setLetterSpacing(QtGui.QFont.SpacingType.PercentageSpacing, 96)
-        self.setFont(font)
+        self.setFont(self.get_monospace_font())
         self.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.NoContextMenu)
         self.setUndoRedoEnabled(False)
 
@@ -221,6 +218,22 @@ class TerminalOutputWidget(QtWidgets.QPlainTextEdit):
         self.replace_line = False
         output_html = self.text_style.format(f"\x1b[0;33m$ \x1b[0m{command_text}")
         self.appendHtml(output_html)
+
+    @staticmethod
+    def get_monospace_font() -> QtGui.QFont:
+        families = QtGui.QFontDatabase.families()
+
+        if "Cascadia Mono" in families:
+            font = QtGui.QFont("Cascadia Mono", 10, 400)
+            font.setHintingPreference(QtGui.QFont.HintingPreference.PreferNoHinting)
+            font.setLetterSpacing(QtGui.QFont.SpacingType.PercentageSpacing, 96)
+        elif "Consolas" in families:
+            font = QtGui.QFont("Consolas", 10, 400)
+        else:
+            font = QtGui.QFont("Lucida Console", 10, 400)
+            font.setStretch(80)
+
+        return font
 
 
 class OutputProgressDialog(QtWidgets.QDialog):
