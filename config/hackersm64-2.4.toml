@@ -51,7 +51,7 @@ include_paths = ["mingw64/bin"]
 # Latest
 name = "Aglab's N64 MinGW Toolchain (v3.0)"
 url = "https://github.com/aglab2/winn64libs/releases/download/3.0/n64libs.zip"
-sha256 = "9dafdd7448b2d29513f1766586ce7df25772b8f6bebe6efaa63b5d88f2d70011"
+sha256 = "effd804c6c105ea59b0aeeda889b6613bc5d288bf107976a6ecf95e0ba2345a0"
 include_paths = ["sdk/bin"]
 
 [dependency.python]
