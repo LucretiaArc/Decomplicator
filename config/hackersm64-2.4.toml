@@ -24,7 +24,7 @@ success_splash = """
 
 [repo]
 url = "https://github.com/HackerN64/HackerSM64.git"
-commit = "3b17dc0653c07f53efc319bc2707b514326030b9"
+commit = "a0d7ef7925002637107f2698c08b0aad978f698a"
 env_path = "env"
 
 [baserom]
@@ -42,16 +42,16 @@ include_paths = ["bin", "usr/bin"]
 
 [dependency.winlibs]
 # Latest
-name = "WinLibs Standalone GCC (v15.2.0)"
-url = "https://github.com/brechtsanders/winlibs_mingw/releases/download/15.2.0posix-13.0.0-ucrt-r5/winlibs-x86_64-posix-seh-gcc-15.2.0-mingw-w64ucrt-13.0.0-r5.zip"
-sha256 = "7c3fd442be612e6ad5f86c91cf33f336748500bc761e3112bfdba29434baa5f6"
+name = "WinLibs Standalone GCC (v16.1.0)"
+url = "https://github.com/brechtsanders/winlibs_mingw/releases/download/16.1.0posix-14.0.0-ucrt-r2/winlibs-x86_64-posix-seh-gcc-16.1.0-mingw-w64ucrt-14.0.0-r2.zip"
+sha256 = "78eff1e2e804b6a6320c713f084b8f820c662104a24cea6a3bfcab82032bdd60"
 include_paths = ["mingw64/bin"]
 
 [dependency.n64libs]
 # Latest
-name = "Aglab's N64 MinGW Toolchain (v2.0)"
-url = "https://github.com/aglab2/winn64libs/releases/download/2.0/n64libs.zip"
-sha256 = "6eb61aed51294038be0605f3a41d7c1f8577a3d27e54a1e104f4325c135e22b2"
+name = "Aglab's N64 MinGW Toolchain (v3.0)"
+url = "https://github.com/aglab2/winn64libs/releases/download/3.0/n64libs.zip"
+sha256 = "effd804c6c105ea59b0aeeda889b6613bc5d288bf107976a6ecf95e0ba2345a0"
 include_paths = ["sdk/bin"]
 
 [dependency.python]
