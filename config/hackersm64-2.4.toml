@@ -46,6 +46,7 @@ name = "WinLibs Standalone GCC (v16.1.0)"
 url = "https://github.com/brechtsanders/winlibs_mingw/releases/download/16.1.0posix-14.0.0-ucrt-r2/winlibs-x86_64-posix-seh-gcc-16.1.0-mingw-w64ucrt-14.0.0-r2.zip"
 sha256 = "78eff1e2e804b6a6320c713f084b8f820c662104a24cea6a3bfcab82032bdd60"
 include_paths = ["mingw64/bin"]
+setup = [["copy", "mingw64/bin/mingw32-make.exe", "mingw64/bin/make.exe"]]
 
 [dependency.n64libs]
 # Latest
@@ -76,22 +77,22 @@ include_paths = ["ripgrep-15.1.0-x86_64-pc-windows-msvc"]
 [[action]]
 name = "Build ROM"
 description = "Compile your changes into a ROM."
-commands = [["mingw32-make", "-j", "%NUMBER_OF_PROCESSORS%"]]
+commands = [["make", "-j", "%NUMBER_OF_PROCESSORS%"]]
 
 [[action]]
 name = "Build and Play"
 description = "Build the ROM and launch it using your default emulator."
 commands = [
-    ["mingw32-make", "-j", "%NUMBER_OF_PROCESSORS%"],
+    ["make", "-j", "%NUMBER_OF_PROCESSORS%"],
     ["start", "./build/us_n64/sm64.z64"]
 ]
 
 [[action]]
 name = "Clear Build Cache"
 description = "Delete all data created by building the ROM. This can fix certain types of build errors, but makes building the ROM take longer next time."
-commands = [["mingw32-make", "clean"]]
+commands = [["make", "clean"]]
 
 [[action]]
 name = "Create Patch"
 description = "Create a patch that you can use to share your romhack with others."
-commands = [["mingw32-make", "patch", "-j", "%NUMBER_OF_PROCESSORS%"]]
+commands = [["make", "patch", "-j", "%NUMBER_OF_PROCESSORS%"]]
