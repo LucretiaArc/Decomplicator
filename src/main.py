@@ -1,4 +1,3 @@
-import datetime
 import logging
 import sys
 
@@ -115,8 +114,7 @@ def main():
     while len(log_files) >= 100:
         log_files.pop(0).unlink()
 
-    log_file_name = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S-%f.log")
-    file_handler = logging.FileHandler(files.LOGS_DIR / log_file_name, encoding="utf-8", delay=True)
+    file_handler = logging.FileHandler(files.get_log_file_path(), encoding="utf-8", delay=True)
     file_handler.setLevel(logging.DEBUG)
     file_handler.setFormatter(LogFormatter(
         fmt="[{levelname}] {module} @ {asctime}.{msecs:03.0f}: {message}",

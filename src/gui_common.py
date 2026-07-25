@@ -2,8 +2,10 @@ import enum
 import logging
 import pathlib
 
+from PySide6 import QtCore
 from PySide6.QtWidgets import *
 
+import files
 import project
 
 
@@ -34,6 +36,11 @@ class SetupContext:
         self.template_config: project.Config | None = None
 
 
+def show_log_file():
+    log_file = str(files.get_log_file_path())
+    QtCore.QProcess.startDetached("explorer", ["/select,", log_file])
+
+
 def info(parent: QWidget, text: str):
     log.info(f"Information dialog shown: {text}")
     QMessageBox.information(parent, "Information", text)
@@ -46,4 +53,15 @@ def warning(parent: QWidget, text: str):
 
 def error(parent: QWidget, text: str):
     log.info(f"Error dialog shown: {text}")
-    QMessageBox.critical(parent, "Error", text)
+    message_box = QMessageBox(
+        QMessageBox.Icon.Critical,
+        "Error",
+        text,
+        parent=parent
+    )
+
+    message_box.addButton(QMessageBox.StandardButton.Ok)
+    logs_button = message_box.addButton("Show Log File", QMessageBox.ButtonRole.HelpRole)
+    logs_button.clicked.disconnect()
+    logs_button.clicked.connect(show_log_file)
+    message_box.show()

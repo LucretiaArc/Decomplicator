@@ -1,5 +1,6 @@
 import __main__
 import ctypes.wintypes
+import datetime
 import logging
 import os
 import pathlib
@@ -41,6 +42,7 @@ _SHGFP_TYPE_CURRENT = 0  # Get current, not default value
 
 # noinspection PyUnresolvedReferences
 _get_folder_path = ctypes.windll.shell32.SHGetFolderPathW
+_log_file_name = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S-%f.log")
 
 
 def get_default_directory() -> pathlib.Path:
@@ -48,6 +50,10 @@ def get_default_directory() -> pathlib.Path:
     _get_folder_path(None, _CSIDL_PERSONAL, None, _SHGFP_TYPE_CURRENT, buffer)
 
     return pathlib.Path(buffer.value)
+
+
+def get_log_file_path() -> pathlib.Path:
+    return LOGS_DIR / _log_file_name
 
 
 def get_recent_project_files() -> list[pathlib.Path]:
