@@ -1,10 +1,14 @@
 import enum
 import html
 import itertools
+import logging
 import re
 import typing
 
 from PySide6 import QtCore, QtWidgets, QtGui
+
+
+log = logging.getLogger(__name__)
 
 
 class AnsiTextFormatter:
@@ -134,7 +138,9 @@ class TerminalOutputWidget(QtWidgets.QPlainTextEdit):
         self.scroll_reset_button.hide()
         self.layout().addWidget(self.scroll_reset_button)
 
-        self.setFont(self.get_monospace_font())
+        font = self.get_monospace_font()
+        log.debug(f"Set font for terminal output widget: {font.family()}")
+        self.setFont(font)
         self.setContextMenuPolicy(QtCore.Qt.ContextMenuPolicy.NoContextMenu)
         self.setUndoRedoEnabled(False)
 
