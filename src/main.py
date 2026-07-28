@@ -138,9 +138,4 @@ def main():
 
 
 if __name__ == "__main__":
-    # Make requests use system SSL certificates
-    # See https://pypi.org/project/pip-system-certs/
-    import pip_system_certs.wrapt_requests
-    pip_system_certs.wrapt_requests.inject_truststore()
-
     main()

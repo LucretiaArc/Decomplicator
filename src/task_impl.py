@@ -5,15 +5,14 @@ import os
 import pathlib
 import re
 import shutil
-import socket
 import stat
 import subprocess
 import tarfile
 import tempfile
 import typing
-import urllib.error
-import urllib.request
 import zipfile
+
+import requests
 
 import files
 from task_base import *
@@ -109,40 +108,44 @@ class DownloadAndValidateTask(Task):
         self.download_destination = destination
         self.expected_hash = expected_hash
 
-    def _report_callback(self, block_count: int, block_size: int, file_size: int):
-        if self.is_cancelled():
-            raise TaskCancelledException()
-
-        if file_size <= 0:
-            self.report_progress(None)
-        else:
-            self.report_progress((block_count * block_size) / file_size)
-
     def run_impl(self):
         self.download_destination.parent.mkdir(parents=True, exist_ok=True)
         if not self.download_destination.exists():
             log.info(f"Downloading {self.download_url} -> {self.download_destination}")
             try:
-                urllib.request.urlretrieve(
-                    self.download_url,
-                    self.download_destination,
-                    reporthook=self._report_callback
-                )
+                response = requests.get(self.download_url, stream=True, timeout=31)
+                file_size = int(response.headers.get("content-length", 0))
+                progress = 0
+                chunk_size = 256 * 1024
+
+                with self.download_destination.open("wb") as fp:
+                    for chunk in response.iter_content(chunk_size):
+                        fp.write(chunk)
+                        progress += len(chunk)
+
+                        if self.is_cancelled():
+                            raise TaskCancelledException()
+
+                        if file_size <= 0:
+                            self.report_progress(None)
+                        else:
+                            self.report_progress(progress / file_size)
+
+                response.raise_for_status()
             except TaskCancelledException as e:
                 self.download_destination.unlink(missing_ok=True)
                 raise e
-            except urllib.error.ContentTooShortError, ConnectionError:
+            except requests.ConnectionError as e:
+                log.exception(e)
                 self.download_destination.unlink(missing_ok=True)
-                raise TaskFailureException("Download failed. Your network connection may have been interrupted.")
-            except urllib.error.HTTPError as e:
+                raise TaskFailureException(f"Download failed. A connection error occurred.")
+            except requests.Timeout:
                 self.download_destination.unlink(missing_ok=True)
-                raise TaskFailureException(f"Download failed.\n\n{e}")
-            except urllib.error.URLError as e:
+                raise TaskFailureException(f"Download failed. Request timed out.")
+            except requests.RequestException as e:
+                log.exception(e)
                 self.download_destination.unlink(missing_ok=True)
-                if isinstance(e.reason, socket.gaierror) and e.reason.errno in socket.errorTab:
-                    raise TaskFailureException(f"Download failed.\n\n{socket.errorTab[e.reason.errno]}")
-                else:
-                    raise TaskFailureException(f"Download failed.\n\n{e.reason}")
+                raise TaskFailureException(f"Download failed. See the log file for more information.")
             except Exception as e:
                 self.download_destination.unlink(missing_ok=True)
                 raise e
