@@ -3,8 +3,8 @@
 # some of the information in the file is only relevant when used as the project template, and other information is only
 # relevant when used as the project file.
 
-# Before distributing a configuration files, it is recommended that you strip template comments from the file, and try
-# to match the format and style used by the configuration files found in the "config" directory where possible.
+# Before distributing a configuration file, it is recommended that you strip template comments, and try to match the
+# format and style used by the configuration files found in the "config" directory where possible.
 
 
 # The config file format version number. This tells the application how the data is structured. Leave this as-is.

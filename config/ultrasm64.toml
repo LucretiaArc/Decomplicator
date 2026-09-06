@@ -1,11 +1,11 @@
 format_version = 2
 
 [info]
-name = "HackerSM64 v2.4"
-description = "A widely-supported base for <i>Super Mario 64</i> romhacks, with common tweaks that can be easily toggled.<br><b>Recommended for beginners.</b>"
+name = "UltraSM64"
+description = "A base for <i>Super Mario 64</i> romhacks, TAS-accurate to the original game.<br><b>Recommended if you want to use levels from the original game.</b>"
 success_splash = """
-<h1>HackerSM64 project setup complete!</h1>
-<p>Congratulations on setting up your project! It is recommended that you Git, which will allow you to track the changes you make to your romhack over time. Git is a command line tool, but there is software that can simplify its use for you, including Visual Studio Code (linked in the section below).</p>
+<h1>UltraSM64 project setup complete!</h1>
+<p>Congratulations on setting up your project! It is recommended that you use Git, which will allow you to track the changes you make to your romhack over time. Git is a command line tool, but there is software that can simplify its use for you, including Visual Studio Code (linked in the section below).</p>
 <p>Once you're familiar with Git, you should:</p>
 <ul>
 <li>Create a new, empty repository on GitHub for your romhack</li>
@@ -16,15 +16,15 @@ success_splash = """
 <p>The following commonly used tools are recommended for creating your romhack:</p>
 <h2><a href="https://www.blender.org/download/">Blender</a> with the <a href="https://github.com/Fast-64/fast64">Fast64 plugin</a></h2>
 <p>Allows you to create custom levels, object models, and animations.<br>
-<i>Fast64 might not be updated for use with the latest version of Blender. Check the Fast64 page linked above to see which versions are supported.</i></p>
+<i>Fast64 might not be updated for use with the latest version of Blender. Check the Fast64 page linked above to see which versions of Blender are supported.</i></p>
 <h2><a href="https://code.visualstudio.com/">Visual Studio Code</a></h2>
 <p>A basic code editor. Also provides an easy way to use Git, so it's helpful for managing your project even if you don't want to write code.<br>
 <i>If you prefer, AI features can be disabled completely by checking "Disable AI Features" on the settings page.</i></p>
 """
 
 [repo]
-url = "https://github.com/HackerN64/HackerSM64.git"
-commit = "cc0936481d3a80dc703968fca8ac1c6b9a6d976c"
+url = "https://github.com/CrashOveride95/ultrasm64.git"
+commit = "dc49adf46a24add9e3232f49eea9f29b89292202"
 env_path = "env"
 
 [baserom]
@@ -66,13 +66,6 @@ setup = [
     ["delete", "python314._pth"]
 ]
 
-[dependency.ripgrep]
-# Latest
-name = "ripgrep (v15.1.0)"
-url = "https://github.com/BurntSushi/ripgrep/releases/download/15.1.0/ripgrep-15.1.0-x86_64-pc-windows-msvc.zip"
-sha256 = "124510b94b6baa3380d051fdf4650eaa80a302c876d611e9dba0b2e18d87493a"
-include_paths = ["ripgrep-15.1.0-x86_64-pc-windows-msvc"]
-
 
 [[action]]
 name = "Build ROM"
@@ -91,8 +84,3 @@ commands = [
 name = "Clear Build Cache"
 description = "Delete all data created by building the ROM. This can fix certain types of build errors, but makes building the ROM take longer next time."
 commands = [["make", "clean"]]
-
-[[action]]
-name = "Create Patch"
-description = "Create a patch that you can use to share your romhack with others."
-commands = [["make", "patch", "-j", "%NUMBER_OF_PROCESSORS%"]]
